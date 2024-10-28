@@ -208,12 +208,12 @@ export default function ComparisonHistoryChart() {
                     return codes.map((code) => {
                         return {
                             option: code.code + ":  " + code.description,
-                            value: code.id,
+                            value: code.code,
                         };
                     });
                 }}
                 onSelect={(option) => {
-                    setCodeEvolution(option.option);
+                    setCodeEvolution(option.value);
                 }}
             />
 
