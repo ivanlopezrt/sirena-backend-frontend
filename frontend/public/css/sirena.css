@@ -1,0 +1,170 @@
+
+html {
+    scroll-behavior: smooth;
+  }
+
+div#root,
+div#kt_app_root {
+    height: 100%;
+}
+
+.background-login-wrapper{
+    filter: drop-shadow(15px 0px 20px rgba(50, 50, 0, 0.3));
+}
+.background-login{
+clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 25% 100%, 0% 50%);
+/*clip-path: polygon(100% 0%, 75% 50%, 100% 100%, 25% 100%, 0% 50%, 25% 0%);*/
+   opacity: 0.9;
+   background-color: white;
+}
+
+.not-found-404 {
+    font-size: 12vw;
+    font-weight: bold;
+    text-align: center;
+}
+
+.navbar-button-container{
+    position: relative;
+}
+
+.navbar-button-container .navbar-button-submenu {
+    position: absolute;
+}
+
+.navbar-button-submenu {
+    display: block;
+    position: absolute;
+}
+
+.navbar-button-container:hover .navbar-button-submenu{
+    display: block;
+    top: 100%;
+}
+
+.navbar-button-submenu.loggedin-dropdown {
+    right: 0px;
+    background: #fff;
+    border-radius: .475rem;
+    background-color: var(--bs-menu-dropdown-bg-color);
+    box-shadow: var(--bs-menu-dropdown-box-shadow);
+    z-index: 107;
+}
+
+.navbar-button-container .navbar-button-submenu.admin-menu {
+    position: absolute;
+    background: #fff;
+    border-radius: .475rem;
+    background-color: var(--bs-menu-dropdown-bg-color);
+    box-shadow: var(--bs-menu-dropdown-box-shadow);
+    z-index: 107;
+
+    width: 50vw;
+}
+
+.chat-list .sticky{
+    height: 100%;
+}
+
+.chat-list .sticky .card-body {
+    height: 100%;
+    overflow: auto;
+}
+
+.chat-list {
+    position: sticky;
+    top: 90px;
+    height: 85vh;
+}
+
+div#kt_chat_messenger_body {
+    max-height: 60vh;
+    overflow-y: auto;
+
+}
+
+.autocomplete_component {
+    position: relative;
+}
+
+ul.autocomplete-ul {
+    position: absolute;
+    width: 100%;
+    background: #fff;
+    z-index: 1;
+    box-shadow: 0px 11px 11px 10px #f5f5f5;
+    border: solid 1px #f5f5f5;
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+    height: 40vh;
+    overflow-y: auto;
+
+}
+
+li.autocomplete-ul__li:hover {
+    border: solid 1px #e5e5e5;
+    border-radius: 5px;
+    background: #e0f4ff;
+    cursor: pointer;
+}
+
+li.autocomplete-ul__li {
+    padding: 11px;
+    border: solid 1px #fff;
+    border-radius: 5px;
+}
+
+.no_code_evolution {
+    text-align: center;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fbfbfb;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: solid 1px #f5f5f5;
+    color: #bdbdbd;
+}
+
+.app-header-menu.app-header-mobile-drawer.drawer-on {
+    width: 70vw;
+}
+@media (min-width: 992px) {
+    [data-kt-app-header-fixed="true"][data-kt-app-sidebar-fixed="true"][data-kt-app-sidebar-push-header="true"]
+        .app-header,
+    [data-kt-app-header-fixed="true"][data-kt-app-sidebar-sticky="on"][data-kt-app-sidebar-push-header="true"]
+        .app-header {
+        left: 0px;
+    }
+
+    [data-kt-app-sidebar-fixed="true"] .app-wrapper {
+        margin-left: 0px;
+    }
+
+    [data-kt-app-toolbar-fixed="true"][data-kt-app-sidebar-fixed="true"][data-kt-app-sidebar-push-toolbar="true"]
+        .app-toolbar,
+    [data-kt-app-toolbar-sticky="on"][data-kt-app-sidebar-fixed="true"][data-kt-app-sidebar-push-toolbar="true"]
+        .app-toolbar {
+        left: 0px;
+    }
+
+    [data-kt-app-header-fixed=true][data-kt-app-toolbar-fixed=true] .app-wrapper {
+            margin-top: var(--bs-app-header-height);
+    }
+    
+}
+
+@media (min-width: 1400px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .my-top-diag-chart,
+    .my-top-history-chart{
+        min-height: 50vh;
+    }
+}
