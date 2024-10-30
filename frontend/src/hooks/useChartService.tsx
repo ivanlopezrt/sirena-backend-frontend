@@ -11,6 +11,7 @@ export type TopsByMonthResponse = {
 };
 
 export type TopsEverResponse = { code: string; total: number };
+export type TopsLastDaysResponse = { code: string; count: number };
 export type EvolutionResponse = { day: string; code: string; total: number }[];
 export type TopSpecialityResponse = {
     specialty: string;
@@ -33,7 +34,7 @@ export default function useChartService() {
      * @throws {Error} - Throws an error if the request is unsuccessful.
      */
     const lastDaysDiagnosis = async (days: number = 30): Promise<any[]> => {
-        const response: IRequesterResponse<Chat[]> = await get(
+        const response: IRequesterResponse<TopsLastDaysResponse[]> = await get(
             "/chart/last_days"
         );
 
