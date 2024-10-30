@@ -1,46 +1,98 @@
-# Getting Started with Create React App
+# Sirena Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto es el frontend de la aplicación Sirena, desarrollado en React. Esta documentación describe el entorno, configuración y despliegue de la aplicación en un contenedor Docker.
 
-## Available Scripts
+## Contenido
 
-In the project directory, you can run:
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Ejecución en Desarrollo](#ejecución-en-desarrollo)
+- [Despliegue con Docker](#despliegue-con-docker)
+- [Dependencias](#dependencias)
+- [Scripts](#scripts)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Requisitos
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- **Node.js**: Recomendado v18.20.4 o superior.
+- **Docker**: Para despliegue en contenedor (opcional para desarrollo local).
 
-### `npm test`
+## Instalación
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Instalar dependencias**:
+    ```bash
+    npm install
+    ```
 
-### `npm run build`
+## Configuración
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables de entorno:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```plaintext
+REACT_APP_API_HOST=http://localhost:3003
+REACT_APP_PUBLIC_URL=https://example.com
+REACT_APP_LOGIN_URL=/public/auth/login
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **`REACT_APP_API_HOST`**: URL de la API backend.
+- **`REACT_APP_PUBLIC_URL`**: URL pública de la aplicación.
+- **`REACT_APP_LOGIN_URL`**: Ruta de inicio de sesión para autenticación.
 
-### `npm run eject`
+## Ejecución en Desarrollo
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Para iniciar la aplicación en modo desarrollo, ejecuta:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+La aplicación estará disponible en `http://localhost:3000`.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Despliegue con Docker
 
-## Learn More
+Para ejecutar el proyecto en un contenedor Docker:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Construir la imagen Docker**:
+    ```bash
+    docker build -t sirena-frontend .
+    ```
+2. **Ejecutar el contenedor**:
+    ```bash
+    docker run -p 3000:3000 sirena-frontend
+    ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Esto levantará la aplicación en `http://localhost:3000`.
+
+### Dockerfile
+
+El Dockerfile realiza los siguientes pasos:
+
+- Utiliza la imagen base `node:18.20.4`.
+- Crea el directorio de trabajo `/usr/src/app`.
+- Copia los archivos de dependencias y ejecuta `npm ci` para instalar.
+- Copia el código fuente y ejecuta `npm run build` para generar los archivos de producción.
+- Expone el puerto 3000 y ejecuta `npm run start`.
+
+## Dependencias
+
+Algunas de las principales dependencias del proyecto son:
+
+- **React**: Biblioteca principal para la interfaz de usuario.
+- **React Router DOM**: Para la navegación en la aplicación.
+- **React Query**: Para la gestión de estados y consultas asíncronas.
+- **Formik**: Para la gestión de formularios.
+- **Lottie React**: Para animaciones.
+- **ApexCharts y React-ApexCharts**: Para visualización de gráficos.
+
+La lista completa de dependencias está en el archivo `package.json`.
+
+## Scripts
+
+Los scripts disponibles en el proyecto son:
+
+- **`npm start`**: Inicia la aplicación en modo desarrollo.
+- **`npm run build`**: Genera una versión optimizada para producción en la carpeta `build`.
+- **`npm test`**: Ejecuta las pruebas configuradas.
+- **`npm run eject`**: Expone la configuración de Create React App (uso avanzado).
