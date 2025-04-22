@@ -1,6 +1,6 @@
 const emailService = require('./emailService');
 const jwt = require('jsonwebtoken');
-const {User, Authentication, Hospital, Specialty, Role} = require('../models');
+const {User, Authentication, Hospital, Specialty, Role} = require('../src/models');
 const crypto = require("crypto");
 const {Sequelize} = require("sequelize");
 
@@ -30,10 +30,6 @@ class AuthService {
         // Find the user by email
         const user = await User.findOne({where: {email}});
         const hashedPassword = this.#hashPassword(password);
-
-        console.log("hashedPassword!!!!!!!!!!!!!!!!!!!!", hashedPassword)
-
-        console.log("user!!!!!!!!!!!!!!!!!!!!", user)
 
         // Check if user exists and password matches
         if (!(user && hashedPassword === user.password)) {

@@ -1,15 +1,16 @@
 import ChatMessageFeedback from "./ChatMessageFeedback";
 import AssistantAvatar from "../Common/AssistantAvatar";
 import UserAvatar from "../Common/UserAvatar";
-import { default as ChatMessageModel } from "../../models/ChatMessage";
+import {default as ChatMessageModel} from "../../models/ChatMessage";
 import FeedbackedMessage from "./FeedbackedMessage";
+import ModifiedMessage from "./ModifiedMessage";
 
 export interface ChatMessageProps {
     message: ChatMessageModel;
 }
 
 export default function ChatMessage(props: ChatMessageProps) {
-    const { message } = props;
+    const {message} = props;
 
     const align = () => {
         return message.role == "assistant"
@@ -37,9 +38,9 @@ export default function ChatMessage(props: ChatMessageProps) {
                 <div className={`d-flex  mb-2 ${aligntext()}`}>
                     <div className="symbol symbol-35px symbol-circle">
                         {message.role == "assistant" ? (
-                            <AssistantAvatar />
+                            <AssistantAvatar/>
                         ) : (
-                            <UserAvatar />
+                            <UserAvatar/>
                         )}
                     </div>
 
@@ -54,18 +55,19 @@ export default function ChatMessage(props: ChatMessageProps) {
                             {new Date(message.date).toLocaleDateString()}{" "}
                             {new Date(message.date).toLocaleTimeString()}
                         </span>
+                        <span  className="badge badge-light-primary loader">{message.status}</span>
                     </div>
                 </div>
-
                 <div
-                    className={`p-5 rounded   text-gray-900 fw-semibold mw-lg-400px text-start ${color()}`}
+                    className={`p-5 rounded pre-wrap text-gray-900 fw-semibold mw-lg-400px text-start ${color()}`}
                     data-kt-element="message-text"
                 >
-                    {message.text}
+                    {message.alternative_text ? message.alternative_text : message.text}
                     {message.rateable && (
-                        <ChatMessageFeedback message={message} />
+                        <ChatMessageFeedback message={message}/>
                     )}
-                    {message.rating && <FeedbackedMessage message={message} />}
+                    {message.alternative_text && <ModifiedMessage message={message}/>}
+                    {message.rating && <FeedbackedMessage message={message}/>}
                 </div>
             </div>
         </div>

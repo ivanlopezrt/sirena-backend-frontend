@@ -53,4 +53,14 @@ export default interface ChatMessage {
      * Indica si el mensaje ha sido guardado o no.
      */
     saved: boolean | null;
+
+    /**
+     * Respuesta modificada del mensaje.
+     */
+    alternative_text: string | null;
+
+    /**
+     * Status informativo del mensaje
+     */
+    status:string;
 }

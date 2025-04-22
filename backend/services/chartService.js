@@ -1,5 +1,5 @@
 const { Op, Sequelize } = require('sequelize');
-const { PatientDiagnosis, Diagnosis, User, Specialty } = require('../models');
+const { PatientDiagnosis, Diagnosis, User, Specialty } = require('../src/models');
 
 /**
  * Service for retrieving and organizing patient diagnosis statistics.

@@ -14,7 +14,7 @@ Este proyecto es el frontend de la aplicación Sirena, desarrollado en React. Es
 
 ---
 
-## Requisitos
+## Requisitos 
 
 - **Node.js**: Recomendado v18.20.4 o superior.
 - **Docker**: Para despliegue en contenedor (opcional para desarrollo local).

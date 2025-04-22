@@ -13,7 +13,7 @@ export default class CodeExtractor {
      * @returns {string[]} - An array of extracted codes without colons.
      */
     extract(text: string): string[] {
-        const regex = /([A-Z]{1})[0-9\.]{1,6}:?/g; // Regex pattern to match codes
+        const regex = /([A-Z]{1})[A-Z0-9\.]{1,10}:?/g; // Regex pattern to match codes
         const codes = text.match(regex); // Match the regex pattern against the text
         return codes ? codes.map(c => c.replace(":", "")) : []; // Return codes without colons
     }

@@ -1,29 +1,45 @@
-import { useChatContext } from "../../context/ChatProvider";
+import {useChatContext} from "../../context/ChatProvider";
 import ChatMessage from "../../models/ChatMessage";
-import { FeedbackRating } from "../../models/shared/FeedbackRating";
+import {FeedbackRating} from "../../models/shared/FeedbackRating";
 import CodeExtractor from "../../services/CodeExtractor";
 import MessageFeedbackModal from "./MessageFeedbackModal";
 import MessageSaveModal from "./MessageSaveModal";
+import MessageEditModal from "./MessageEditModal";
 
 export interface ChatMessageFeedbackProps {
     message: ChatMessage;
 }
 
 export default function ChatMessageFeedback(props: ChatMessageFeedbackProps) {
-    const { message } = props;
-    const { feedback } = useChatContext();
+    const {message} = props;
+    const {feedback} = useChatContext();
 
     const successFeedback = () => {
         feedback(message, FeedbackRating.SUCCESS, "");
     };
 
     const answerHasCodes = () => {
-        return new CodeExtractor().extract(props.message.text).length > 0;
+        if (message.alternative_text) {
+            return new CodeExtractor().extract(message.alternative_text).length > 0;
+        }
+        return new CodeExtractor().extract(message.text).length > 0;
     };
 
     return (
         <>
             <div className="assist-feedback-container mt-2 d-flex align-items-center">
+                {!message.rating && !message.alternative_text && (
+                    <button
+                        data-bs-toggle="modal"
+                        data-bs-target={`#edit_modal_for_${message.id}`}
+                        className="btn btn-sm btn-icon btn-active-light-primary"
+                        type="button"
+                        aria-label="Editar diagnóstico"
+                        data-bs-original-title="Editar diagnóstico"
+                    >
+                        <i className="fa-solid fa-pen"></i>
+                    </button>
+                )}
                 {!message.saved && answerHasCodes() && (
                     <button
                         data-bs-toggle="modal"
@@ -36,7 +52,7 @@ export default function ChatMessageFeedback(props: ChatMessageFeedbackProps) {
                         <i className="bi bi-floppy"></i>
                     </button>
                 )}
-                {!message.rating && (
+                {!message.alternative_text && !message.rating && (
                     <>
                         <button
                             onClick={() => {
@@ -69,8 +85,9 @@ export default function ChatMessageFeedback(props: ChatMessageFeedbackProps) {
                     </>
                 )}
             </div>
-            <MessageFeedbackModal message={message} />
-            <MessageSaveModal message={message} />
+            <MessageFeedbackModal message={message}/>
+            <MessageSaveModal id={JSON.stringify(message)} message={message}/>
+            <MessageEditModal message={message}/>
         </>
     );
 }

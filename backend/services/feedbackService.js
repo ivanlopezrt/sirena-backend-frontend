@@ -1,4 +1,4 @@
-const {Chat, Message, Feedback} = require('../models');
+const {Chat, Message, Feedback} = require('../src/models');
 const {Sequelize} = require("sequelize");
 const {response} = require("express");
 

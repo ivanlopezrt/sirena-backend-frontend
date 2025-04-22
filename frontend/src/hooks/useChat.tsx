@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import Chat from "../models/Chat";
 import ChatMessage from "../models/ChatMessage";
 import FeedbackService from "../services/FeedbackService";
-import { FeedbackRating } from "../models/shared/FeedbackRating";
+import {FeedbackRating} from "../models/shared/FeedbackRating";
 import DiagnosisService from "../services/DiagnosisService";
 import DiagnosticData from "../models/DiagnosticData";
 import toast from "react-hot-toast";
@@ -20,7 +20,7 @@ export default function useChat(activeChat: Chat) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const feedbackService: FeedbackService = new FeedbackService();
     const diagnosticService: DiagnosisService = new DiagnosisService();
-    const { getMessages, addMessage: addMessageSrv } = useChatsService();
+    const {getMessages, addMessage: addMessageSrv, editResponseMessage: editResponseMessageSrv} = useChatsService();
 
     /**
      * Loads the chat messages for the given chat.
@@ -142,6 +142,26 @@ export default function useChat(activeChat: Chat) {
     };
 
     /**
+     * Save edited message reply.
+     *
+     * @param {ChatMessage} message - The message with the updated response.
+     * @returns {Promise<void>}
+     */
+    const editResponseMessage = async (message: ChatMessage) => {
+
+        try {
+            const result = await editResponseMessageSrv(message.chat_id, message);
+            if (!result) {
+                toast.error("No se pudo guardar la respuesta editada");
+            }
+
+            toast.success("Respuesta editada");
+        } catch {
+            toast.error("No se pudo guardar la respuesta editada");
+        }
+    };
+
+    /**
      * Creates the initial message for a new chat.
      *
      * @param {any} chat_id - The ID of the chat for which to create the first message.
@@ -157,6 +177,8 @@ export default function useChat(activeChat: Chat) {
             text: "Hola! ¿en qué puedo ayudarte?",
             rateable: false,
             saved: false,
+            alternative_text: null,
+             status:""
         };
     };
 
@@ -176,6 +198,8 @@ export default function useChat(activeChat: Chat) {
             text: "Parece que estoy teniendo problemas. Intenta en un rato tu consulta",
             rateable: false,
             saved: true,
+            alternative_text: null,
+            status:""
         };
     };
 
@@ -189,6 +213,7 @@ export default function useChat(activeChat: Chat) {
         messages,
         addMessage,
         updateMessage,
+        editResponseMessage,
         feedback,
         diagnose,
         waitingAnswer,

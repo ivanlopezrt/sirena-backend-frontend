@@ -9,7 +9,7 @@ export default function FeedbackedMessage(props: ChatMessageFeedbackProps) {
             Este mensaje fue votado como{" "}
             {message.rating == FeedbackRating.SUCCESS
                 ? "acertado"
-                : "equivocado"}
+                : "equivocado"}.
         </div>
     );
 }

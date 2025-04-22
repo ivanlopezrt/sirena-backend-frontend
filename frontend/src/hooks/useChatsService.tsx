@@ -9,7 +9,7 @@ import ChatMessage from "../models/ChatMessage";
  * @returns {Object} The service methods for chat operations.
  */
 export default function useChatsService() {
-    const { get, post, remove } = useRequest();
+    const {get, post, remove} = useRequest();
 
     /**
      * Fetches a list of chats.
@@ -80,5 +80,30 @@ export default function useChatsService() {
         throw new Error(`Error en la petición: ${response.code}`);
     };
 
-    return { list, deleteChat, getMessages, addMessage };
+
+    /**
+     * Edits a message reply in a specific chat.
+     *
+     * @param {string} chat_id - The ID of the chat to which the message will be added.
+     * @param {ChatMessage} message - The message to edit the reply for.
+     * @returns {Promise<ChatMessage>} The updated message.
+     * @throws Will throw an error if the request fails.
+     */
+    const editResponseMessage = async (
+        chat_id: string,
+        message: ChatMessage
+    ): Promise<ChatMessage> => {
+        message.chat_id = chat_id;
+
+        const response: IRequesterResponse<ChatMessage> = await post(
+            `/chat/${chat_id}/message/response/edit`,
+            message
+        );
+        if (response.success) {
+            return response.data;
+        }
+        throw new Error(`Error en la petición: ${response.code}`);
+    };
+
+    return {list, deleteChat, getMessages, addMessage, editResponseMessage};
 }

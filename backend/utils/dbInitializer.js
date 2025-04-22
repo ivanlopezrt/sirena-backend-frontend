@@ -1,7 +1,6 @@
-const Hospital = require('../models/hospital')(require('../models').sequelize, require('sequelize'));
-const Role = require('../models/role')(require('../models').sequelize, require('sequelize'));
-const Specialty = require('../models/specialty')(require('../models').sequelize, require('sequelize'));
-
+const Hospital = require('../src/models/hospital')(require('../src/models').sequelize, require('sequelize'));
+const Role = require('../src/models/role')(require('../src/models').sequelize, require('sequelize'));
+const Specialty = require('../src/models/specialty')(require('../src/models').sequelize, require('sequelize'));
 
 /**
  * Initializes the database with default hospital, role, and specialty data.

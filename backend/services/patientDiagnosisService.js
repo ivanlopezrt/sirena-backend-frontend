@@ -1,6 +1,6 @@
-const { Diagnosis, PatientDiagnosis, Message } = require('../models');
+const { Diagnosis, PatientDiagnosis, Message } = require('../src/models');
 const { Sequelize } = require("sequelize");
-const DNI = require("../models/DNI");
+const DNI = require("../src/models/DNI");
 const messageService = require('./messageService');
 
 /**

@@ -1,4 +1,4 @@
-const {Chat} = require('../models');
+const {Chat} = require('../src/models');
 const {Sequelize} = require("sequelize");
 
 /**

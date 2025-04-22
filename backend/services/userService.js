@@ -1,4 +1,4 @@
-const {User, Hospital, Role, Specialty} = require('../models');
+const {User, Hospital, Role, Specialty} = require('../src/models');
 const {Sequelize} = require("sequelize");
 
 /**

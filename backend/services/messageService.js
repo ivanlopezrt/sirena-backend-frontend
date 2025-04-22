@@ -1,4 +1,4 @@
-const {Chat, Message, Feedback} = require('../models');
+const {Chat, Message, Feedback, EditedAnswer} = require('../src/models');
 const {Sequelize} = require("sequelize");
 const {response} = require("express");
 
@@ -34,28 +34,34 @@ class messageService {
 
                 const messages = await Message.findAll({
                     where: {chat_id: chat_id},
-                    order: [['date', 'DESC'],["id","DESC"]],
+                    order: [['date', 'DESC'], ["id", "DESC"]],
                     ...filter
                 });
 
-                const messagesWithFeedback = await Promise.all(messages.map(async (message) => {
-                    if (message?.rateable) {
+                const enrichedMessages = await Promise.all(messages.map(async (message) => {
+
+                    let messageData = message.toJSON();
+
+                    if (messageData?.rateable) {
                         const feedback = await Feedback.findOne({where: {message_id: message.id}});
                         if (feedback) {
-                            message = feedback.rating == "mistake" ? {
-                                ...message.toJSON(),
-                                feedback: feedback.feedback,
-                                rating: feedback.rating
-                            } : {
-                                ...message.toJSON(),
-                                rating: feedback.rating
-                            };
+                            messageData = feedback.rating === "mistake"
+                                ? {...messageData, feedback: feedback.feedback, rating: feedback.rating}
+                                : {...messageData, rating: feedback.rating};
                         }
                     }
-                    return message;
+
+                    if (messageData?.role === "assistant") {
+                        const responseEdit = await EditedAnswer.findOne({where: {message_id: messageData.id}});
+                        if (responseEdit) {
+                            messageData = {...messageData, alternative_text: responseEdit.response};
+                        }
+                    }
+
+                    return messageData;
                 }));
 
-                return messagesWithFeedback;
+                return enrichedMessages;
             }
         }
 
@@ -129,6 +135,66 @@ class messageService {
         }
 
         return {code: 200, message: createdMesssage.toJSON()};
+
+    }
+
+    /**
+     * Creates a record with the modified message text.
+     * @async
+     * @param {number} req_user_id: The ID of the user who is going to modify the message text.
+     * @param {number} chat_id: The ID of the chat to which the message belongs.
+     * @param {number} message_id: The ID of the message whose text we will modify.
+     * @param {string} alternative_text: The text of the modified message.
+     * @returns {Promise<Object>}: An object containing the response code and the modified message.
+     */
+    async editResponseMessage(req_user_id, chat_id, message_id, alternative_text) {
+
+        if (!(alternative_text && alternative_text.trim() !== "")) {
+            return {code: 400, message: "El texto del mensaje está vacío"}
+        }
+
+        if (!chat_id) {
+            return {code: 400, message: "Se necesita un chat_id valido"}
+        }
+
+        let chat = await Chat.findOne({where: {id: chat_id}});
+
+        if (!chat) {
+            return {code: 500, message: "Fallo al actualizar la respuesta del mensaje"}
+        } else if (chat.user_id !== req_user_id) {
+            return {code: 401, message: "No puedes actualizar la respuesta del mensaje"}
+        }
+
+        const findMesssage = await Message.findOne({
+            where: {
+                id: message_id,
+                chat_id: chat_id
+            }
+        });
+
+        if (!findMesssage) {
+            return {code: 500, message: "Fallo al actualizar la respuesta del mensaje"}
+        }
+
+        if (findMesssage.role !== 'assistant') {
+            return {code: 401, message: "No puedes actualizar la respuesta del mensaje"}
+        }
+
+        const createdEditedAnswer = await EditedAnswer.create({
+            message_id: message_id,
+            response: alternative_text,
+        });
+
+        if (!createdEditedAnswer) {
+            return {code: 500, message: "Fallo al crear el mensaje"}
+        }
+
+        const enrichedMessages = {
+            ...findMesssage.toJSON(),
+            alternative_text: alternative_text,
+        }
+
+        return {code: 200, message: enrichedMessages};
 
     }
 

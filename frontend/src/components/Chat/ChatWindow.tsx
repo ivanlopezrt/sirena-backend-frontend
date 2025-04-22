@@ -1,19 +1,22 @@
-import { Field, Form, Formik } from "formik";
-import { useChatContext } from "../../context/ChatProvider";
+import {Field, Form, Formik} from "formik";
+import {useChatContext} from "../../context/ChatProvider";
 import Chat from "../../models/Chat";
 import ChatMessage from "./ChatMessage";
-import { useEffect, useRef, useState } from "react";
-import { useAuthContext } from "../../context/AuthContext";
+import {useEffect, useRef, useState} from "react";
+import {useAuthContext} from "../../context/AuthContext";
 import Loading from "../UI/Loading";
+import { CONNECTION_STATE } from "../../hooks/useWebSocketChat";
+import { stat } from "fs";
+import ChatAssistantStatus from "./ChatAssistantStatus";
 
 export interface ChatProps {
     model: Chat;
 }
 
 export default function ChatWindow(props: ChatProps) {
-    const { sendMessage, messages, chat, waitingAnswer } = useChatContext();
+    const {sendMessage, messages, chat, waitingAnswer,status, connectionState} = useChatContext();
     const [isClient, setIsClient] = useState(false);
-    const { currentUser } = useAuthContext();
+    const {currentUser} = useAuthContext();
     const scrollChatWindow = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -38,6 +41,8 @@ export default function ChatWindow(props: ChatProps) {
                 text: prompt,
                 rateable: false,
                 saved: false,
+                alternative_text: null,
+                status:""
             });
         }
     };
@@ -47,17 +52,7 @@ export default function ChatWindow(props: ChatProps) {
             <div className="card  h-100" id="kt_chat_messenger">
                 <div className="card-header" id="kt_chat_messenger_header">
                     <div className="card-title">
-                        <div className="d-flex justify-content-center flex-column me-3">
-                            <span className="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1">
-                                Asistente
-                            </span>
-                            <div className="mb-0 lh-1">
-                                <span className="badge badge-success badge-circle w-10px h-10px me-1"></span>
-                                <span className="fs-7 fw-semibold text-muted">
-                                    En linea
-                                </span>
-                            </div>
-                        </div>
+                       <ChatAssistantStatus />
                     </div>
                 </div>
 
@@ -78,8 +73,8 @@ export default function ChatWindow(props: ChatProps) {
                 </div>
 
                 <Formik
-                    initialValues={{ prompt: "" }}
-                    onSubmit={(values, { resetForm }) => {
+                    initialValues={{prompt: ""}}
+                    onSubmit={(values, {resetForm}) => {
                         addMessageToChat(values.prompt);
                         resetForm();
                     }}
@@ -99,7 +94,7 @@ export default function ChatWindow(props: ChatProps) {
                             />
 
                             <div className="d-flex justify-content-end">
-                                {!waitingAnswer ? (
+                                {!waitingAnswer && status.allowQuestions && connectionState === CONNECTION_STATE.CONNECTED? (
                                     <button
                                         className="btn btn-primary"
                                         type="submit"
@@ -110,8 +105,8 @@ export default function ChatWindow(props: ChatProps) {
                                         </span>
                                     </button>
                                 ) : (
-                                    <div style={{ width: "40px" }}>
-                                        <Loading />
+                                    <div style={{width: "40px"}}>
+                                        <Loading/>
                                     </div>
                                 )}
                             </div>

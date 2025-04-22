@@ -1,4 +1,4 @@
-const {Role, User} = require('../models');
+const {Role, User} = require('../src/models');
 
 /**
  * Middleware to ensure that the user has admin privileges.

@@ -1,43 +1,56 @@
-import { Field, Form, Formik } from "formik";
+import {Field, Form, Formik} from "formik";
 import ChatMessage from "../../models/ChatMessage";
-import { useChatContext } from "../../context/ChatProvider";
-import { FeedbackRating } from "../../models/shared/FeedbackRating";
-import { Gender } from "../../models/Gender";
+import {useChatContext} from "../../context/ChatProvider";
+import {Gender} from "../../models/Gender";
 import CodeExtractor from "../../services/CodeExtractor";
 import toast from "react-hot-toast";
+import {Key, useEffect, useState} from "react";
 
 export interface MessageSaveModalProps {
+    id: Key | null | undefined;
     message: ChatMessage;
 }
 
 export default function MessageSaveModal(props: MessageSaveModalProps) {
-    const { message } = props;
-    const { diagnose, updateMessage } = useChatContext();
+    const {id, message} = props;
+    const {diagnose, updateMessage} = useChatContext();
+    const [codes, setCodes] = useState<string[]>([]);
 
-    const renderCodes = () => {
-        return new CodeExtractor().extract(message.text).map((code) => {
-            return (
-                <span
-                    key={code}
-                    className="badge badge-exclusive badge-light-primary fw-semibold fs-6 px-2 py-1 ms-1"
-                >
-                    {code}
-                </span>
-            );
-        });
+    useEffect(() => {
+        recalculateCodes();
+    }, []);
+
+    const recalculateCodes = () => {
+        let extractedCodes = new CodeExtractor().extract(message.alternative_text ? message.alternative_text : message.text);
+        let uniqueCodes = extractedCodes.filter(
+            (value, index, self) => self.indexOf(value) === index
+        );
+        setCodes(uniqueCodes);
+    };
+
+    const removeCode = (codeToRemove: string) => {
+        let filteredCodes = codes.filter(
+            (code: string) => code !== codeToRemove
+        );
+        setCodes(Array.from(filteredCodes));
     };
 
     return (
         <div
+            key={id}
             className="modal fade"
             tabIndex={-1}
             id={`save_modal_for_${message.id}`}
         >
             <Formik
-                initialValues={{ dni: "", gender: Gender.FEMALE }}
-                onSubmit={(values, { setSubmitting, resetForm }) => {
+                initialValues={{dni: "", gender: Gender.FEMALE}}
+                onSubmit={(values, {setSubmitting, resetForm}) => {
+                    if (codes.length == 0) {
+                        toast.error("No hay códigos para guardar");
+                        return;
+                    }
+
                     try {
-                        let codes = new CodeExtractor().extract(message.text);
                         diagnose(message, {
                             dni: values.dni,
                             gender: values.gender,
@@ -64,6 +77,7 @@ export default function MessageSaveModal(props: MessageSaveModalProps) {
                                     className="btn btn-icon btn-sm btn-active-light-primary ms-2"
                                     data-bs-dismiss="modal"
                                     aria-label="Close"
+                                    onClick={() => recalculateCodes()}
                                 >
                                     <i className="ki-duotone ki-cross fs-1">
                                         <span className="path1"></span>
@@ -86,7 +100,23 @@ export default function MessageSaveModal(props: MessageSaveModalProps) {
                                         Códigos identificados
                                     </label>
 
-                                    <div>{renderCodes()}</div>
+                                    <div>
+                                        {codes.map((code: string) => {
+                                            return (
+                                                <span
+                                                    onClick={() => {
+                                                        removeCode(code);
+                                                    }}
+                                                    key={code}
+                                                    data-bs-toggle="tooltip"
+                                                    aria-label="Pulsa para eliminar"
+                                                    className="badge badge-exclusive badge-light-primary fw-semibold fs-6 px-2 py-1 ms-1 feedback-code"
+                                                >
+                                                    {code}
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
 
                                 <div className="mb-10">
@@ -133,9 +163,10 @@ export default function MessageSaveModal(props: MessageSaveModalProps) {
 
                             <div className="modal-footer">
                                 <button
-                                    type="submit"
+                                    type="button"
                                     className="btn btn-light"
                                     data-bs-dismiss="modal"
+                                    onClick={() => recalculateCodes()}
                                 >
                                     Cerrar
                                 </button>

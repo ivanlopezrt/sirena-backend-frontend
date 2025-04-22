@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "tsc": "npx tsc",
+    "start": "nodemon server.js &  nodemon --ext ts --exec ts-node src/webserver.ts 8015 &",
+    "start2": "pkill -f node & pkill -f nodemon & kill -9 $(lsof -ti :3003) & kill -9 $(lsof -ti :8010) & node server.js & ts-node src/webserver.ts 8010 &",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "websocket": "node websocket.js 8005 & node websocket2.js 9005 &",
+    "remotews": "nodemon --ext ts --exec ts-node src/remotewebserver.ts 9015"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +22,16 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.10.3",
     "nodemailer": "^6.9.14",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "ws": "^8.18.1"
   },
   "devDependencies": {
-    "sequelize-cli": "^6.6.2"
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.16",
+    "@types/ws": "^8.18.1",
+    "nodemon": "^3.1.9",
+    "sequelize-cli": "^6.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   }
 }

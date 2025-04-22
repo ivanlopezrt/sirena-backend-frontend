@@ -1,11 +1,12 @@
-import React, { createContext, useContext } from "react";
-import { ChatModel } from "../models/ChatModel";
+import React, {createContext, useContext} from "react";
+import {ChatModel} from "../models/ChatModel";
 import Chat from "../models/Chat";
 import useChat from "../hooks/useChat";
 import ChatMessage from "../models/ChatMessage";
 import useChats from "../hooks/useChats";
-import { FeedbackRating } from "../models/shared/FeedbackRating";
+import {FeedbackRating} from "../models/shared/FeedbackRating";
 import DiagnosticData from "../models/DiagnosticData";
+import useWebSocketChat, { ChatStatus, CONNECTION_STATE } from "../hooks/useWebSocketChat";
 
 const ChatContext = createContext<{
     chat: Chat | null; // Chat activo actualmente.
@@ -15,6 +16,7 @@ const ChatContext = createContext<{
     createChat: (message: ChatMessage) => void; // Función para crear un nuevo chat.
     deleteChat: (chat: Chat) => void; // Función para eliminar un chat.
     data: Chat[] | undefined; // Lista de todos los chats.
+    editResponseMessage: (message: ChatMessage) => void; // Función para editar la respuesta de un mensaje.
     updateMessage: (messageId: string, message: ChatMessage) => void; // Función para actualizar un mensaje.
     feedback: (
         message: ChatMessage,
@@ -23,34 +25,50 @@ const ChatContext = createContext<{
     ) => void; // Función para dar feedback sobre un mensaje.
     diagnose: (message: ChatMessage, data: DiagnosticData) => void; // Función para diagnosticar basado en los datos.
     waitingAnswer: boolean; // Estado que indica si se está esperando una respuesta.
+    status:ChatStatus;
+    connectionState:CONNECTION_STATE
 }>({
     chat: new ChatModel(),
     messages: [],
-    setActiveChat: () => {},
-    sendMessage: () => {},
+    setActiveChat: () => {
+    },
+    sendMessage: () => {
+    },
     data: [],
-    createChat: () => {},
-    deleteChat: () => {},
-    updateMessage: () => {},
-    feedback: () => {},
-    diagnose: () => {},
+    createChat: () => {
+    },
+    deleteChat: () => {
+    },
+    editResponseMessage: () => {
+    },
+    updateMessage: () => {
+    },
+    feedback: () => {
+    },
+    diagnose: () => {
+    },
     waitingAnswer: false,
+    status:{description:"", allowQuestions:true},
+    connectionState:CONNECTION_STATE.DISCONNECTED
 });
 
 // Proveedor del contexto de chat.
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+                                                                          children,
+                                                                      }) => {
     const {
         chat,
         loadChat,
         messages,
         addMessage,
+        editResponseMessage,
         updateMessage,
         feedback,
         diagnose,
         waitingAnswer,
-    } = useChat(new ChatModel());
+        status,
+        connectionState
+    } = useWebSocketChat(new ChatModel());
     const { data, addChat, removeChat } = useChats();
 
     /**
@@ -119,10 +137,13 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
                 data,
                 createChat,
                 deleteChat,
+                editResponseMessage,
                 updateMessage,
                 feedback,
                 diagnose,
                 waitingAnswer,
+                status,
+                connectionState
             }}
         >
             {children}

@@ -1,12 +1,11 @@
-const {Diagnosis, User} = require('../models');
-const {Op} = require('sequelize');
+const { Diagnosis, User } = require("../src/models");
+const { Op } = require("sequelize");
 
 /**
  * Service for handling patient diagnoses.
  * @class PatientDiagnosisService
  */
 class PatientDiagnosisService {
-
     /**
      * Retrieves a paginated list of all diagnoses.
      * @async
@@ -14,20 +13,19 @@ class PatientDiagnosisService {
      * @returns {Promise<Array<Object>>} - List of diagnoses.
      */
     async getAll(page) {
-
         let filter = {};
         const pageSize = 100;
 
         if (page) {
             filter = {
                 limit: 100,
-                offset: (page - 1) * pageSize
-            }
+                offset: (page - 1) * pageSize,
+            };
         }
 
         const diagnosis = await Diagnosis.findAll({
-            order: [['code', 'ASC']],
-            ...filter
+            order: [["code", "ASC"]],
+            ...filter,
         });
 
         return diagnosis;
@@ -41,7 +39,7 @@ class PatientDiagnosisService {
      */
     async getByID(id) {
         if (id) {
-            const diagnosis = await Diagnosis.findOne({where: {id: id}});
+            const diagnosis = await Diagnosis.findOne({ where: { id: id } });
             if (diagnosis) {
                 return diagnosis;
             }
@@ -57,7 +55,9 @@ class PatientDiagnosisService {
      */
     async getByCode(code) {
         if (code) {
-            const diagnosis = await Diagnosis.findOne({where: {code: code}});
+            const diagnosis = await Diagnosis.findOne({
+                where: { code: code },
+            });
             if (diagnosis) {
                 return diagnosis;
             }
@@ -74,34 +74,33 @@ class PatientDiagnosisService {
      */
     async find(text, page) {
         if (text) {
-
             let filter = {};
             const pageSize = 100;
 
             if (page) {
                 filter = {
                     limit: 100,
-                    offset: (page - 1) * pageSize
-                }
+                    offset: (page - 1) * pageSize,
+                };
             }
 
             const diagnoses = await Diagnosis.findAll({
-                order: [['code', 'ASC']],
+                order: [["code", "ASC"]],
                 ...filter,
                 where: {
                     [Op.or]: [
                         {
                             code: {
-                                [Op.like]: `%${text}%`
-                            }
+                                [Op.like]: `%${text}%`,
+                            },
                         },
                         {
                             description: {
-                                [Op.like]: `%${text}%`
-                            }
-                        }
-                    ]
-                }
+                                [Op.like]: `%${text}%`,
+                            },
+                        },
+                    ],
+                },
             });
             if (diagnoses) {
                 return diagnoses;

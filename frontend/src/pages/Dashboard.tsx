@@ -3,6 +3,7 @@ import LastDaysDiagnosisChart from "../components/Charts/LastDaysDiagnosisChart"
 import TopsByMonthChart from "../components/Charts/TopsByMonthChart";
 import TopsHistoryChart from "../components/Charts/TopsHistoryChart";
 import TopSpecialitiesChart from "../components/Charts/TopSpecialitiesChart";
+import ChatWebSocket from "../components/Chat/ChatWebSocket";
 
 export default function Dashboard() {
     return (
@@ -48,6 +49,10 @@ export default function Dashboard() {
                 <div className="col-xl-12">
                     <TopSpecialitiesChart />
                 </div>
+            </div>
+
+            <div className="row" style={{ minHeight: "60vh" }}>
+                <ChatWebSocket />
             </div>
         </>
     );

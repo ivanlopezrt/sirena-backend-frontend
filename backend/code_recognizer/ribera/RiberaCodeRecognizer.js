@@ -1,5 +1,5 @@
 const messageService = require("../../services/messageService");
-const   RecognitionResult = require("../RecognitionResult");
+const RecognitionResult = require("../RecognitionResult");
 
 /**
  * Class representing a recognizer that interacts with the Ribera API.
@@ -24,13 +24,15 @@ class RiberaCodeRecognizer {
      */
     async ask(messages) {
 
-        const [last_message,...rest] = messages
+        const [last_message, ...rest] = messages
 
-        const new_message = {role:last_message.role, content:last_message.text}
+        const new_message = {role: last_message.role, content: last_message.text}
 
-        const history = rest.map(m=>{  return {role: m.role, content: m.text} })
+        const history = rest.map(m => {
+            return {role: m.role, content: m.text}
+        })
 
-        const body = { history: history, new_message: new_message }
+        const body = {history: history, new_message: new_message}
 
         return await this._request(body);
 
@@ -46,25 +48,24 @@ class RiberaCodeRecognizer {
      */
     async _request(body) {
 
-        try{
-            const response =  await fetch(this._HOST + "/generate",{
+        try {
+            const response = await fetch(this._HOST + "/generate", {
                 method: 'POST',
                 headers: {},
                 body: JSON.stringify(body),
             });
 
-            if(response.ok){
+            if (response.ok) {
                 const data = await response.json();
 
-                if(data && data.length){
+                if (data && data.length) {
                     return new RecognitionResult(data[0].generated_text, false);
                 }
 
             }
 
             return new RecognitionResult("Lo siento. Algo ha fallado", true);
-        }
-        catch{
+        } catch {
             return new RecognitionResult("Lo siento. Algo ha fallado", true);
         }
 

@@ -1,4 +1,3 @@
-
 const RecognitionService = require('../code_recognizer/RecognitionService');
 const messageService = require('../services/messageService');
 
@@ -20,10 +19,10 @@ exports.createMessage = async (req, res) => {
         const {role, text, id} = req.body;
         const response = await messageService.createMessage(req.user.id, chat_id, id, role, text);
         if (response.code === 200) {
-            const messages = (await messageService.getMessages(req.user.id,chat_id));
+            const messages = (await messageService.getMessages(req.user.id, chat_id));
             const recognizer = new RecognitionService(req.user.id, chat_id);
             res.status(response.code).json(await recognizer.recognize(messages));
-            
+
         } else {
             res.status(response.code).json({message: response.message});
         }
@@ -33,3 +32,14 @@ exports.createMessage = async (req, res) => {
     }
 };
 
+exports.editResponseMessage = async (req, res) => {
+    try {
+        const {chat_id} = req.params;
+        const {id: message_id, alternative_text} = req.body;
+        const response = await messageService.editResponseMessage(req.user.id, chat_id, message_id, alternative_text);
+        res.status(response.code).json({message: response.message});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: "Ha sucedido un error"});
+    }
+};

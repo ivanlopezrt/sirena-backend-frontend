@@ -131,6 +131,26 @@ li.autocomplete-ul__li {
 .app-header-menu.app-header-mobile-drawer.drawer-on {
     width: 70vw;
 }
+
+/* Contenedor de la animación */
+.loader {
+    background: linear-gradient(90deg, #f0f0f0 25%, #c7c7c7 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite ease-in-out;
+    border-radius: 8px;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+}
+
+/* Animación del fondo */
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
 @media (min-width: 992px) {
     [data-kt-app-header-fixed="true"][data-kt-app-sidebar-fixed="true"][data-kt-app-sidebar-push-header="true"]
         .app-header,
@@ -167,4 +187,10 @@ li.autocomplete-ul__li {
     .my-top-history-chart{
         min-height: 50vh;
     }
+}
+
+.feedback-code:hover {
+    background: var(--bs-danger);
+    color: var(--bs-danger-light);
+    cursor: pointer;
 }
