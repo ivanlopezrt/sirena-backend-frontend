@@ -12,22 +12,6 @@ class AnswerMessageContent(BaseModel):
     incluyendo el ID del chat, el ID del mensaje y el texto de la respuesta.
     """
 
-    chatId: UUID
-    """
-    ID único del chat al que pertenece la respuesta.
-
-    Este campo contiene el identificador único del chat, que permite asociar la respuesta
-    con un chat específico.
-    """
-
-    messageId: UUID
-    """
-    ID único del mensaje de respuesta.
-
-    Este campo contiene el identificador único del mensaje, utilizado para rastrear y 
-    referenciar la respuesta específica.
-    """
-
     text: str
     """
     Texto de la respuesta.

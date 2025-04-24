@@ -4,5 +4,6 @@ export enum MessageType{
     PARTIAL_ANSWER="partial_answer",
     END="end",
     STATUS="status",
-    UNKNOWN="unknown"
+    UNKNOWN="unknown",
+    ERROR="error"
 }

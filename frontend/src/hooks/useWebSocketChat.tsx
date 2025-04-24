@@ -12,10 +12,13 @@ import SocketMessageInterface from "../models/messages/SocketMessageInterface";
 import MessageFactory from "../models/messages/MessageFactory";
 import AnswerMessage from "../models/messages/AnswerMessage";
 import { MessageType } from "../models/messages/MessageType";
-import { UUID } from "crypto";
 import QuestionMessage from "../models/messages/QuestionMessage";
 import EndMessage from "../models/messages/EndMessage";
 import StatusMessage from "../models/messages/StatusMessage";
+import UnknowMessage from "../models/messages/UnknowMessage";
+import { v4 as uuidv4 } from 'uuid';
+import { UUID } from "../models/shared/UUIDType";
+import ErrorMessage from "../models/messages/ErrorMessage";
 
 /**
  * Custom hook for managing chat interactions.
@@ -45,6 +48,7 @@ export default function useWebSocketChat(activeChat: Chat) {
     const socketMessagesRef = useRef<ChatMessage[]>([]);
     const [status, setStatus] = useState<ChatStatus>({ description: "", allowQuestions: true });
     const [connectionState, setConnectionState] = useState<CONNECTION_STATE>(CONNECTION_STATE.DISCONNECTED);
+    const WS_HOST = process.env.REACT_APP_WS_HOST!
 
     /**
      * Loads the chat messages for the given chat.
@@ -200,28 +204,8 @@ export default function useWebSocketChat(activeChat: Chat) {
             rateable: false,
             saved: false,
             alternative_text: "",
-            status: ""
-        };
-    };
-
-    /**
-     * Creates a generic error message
-     *
-     * @param {any} chat_id - The ID of the chat for which to create the error message.
-     * @returns {ChatMessage} The message to display
-     */
-    const createErrorMessage = (chat_id: any): ChatMessage => {
-        return {
-            id: crypto.randomUUID(),
-            userName: "Asistente",
-            chat_id: chat_id,
-            date: new Date(),
-            role: "assistant",
-            text: "Parece que estoy teniendo problemas. Intenta en un rato tu consulta",
-            rateable: false,
-            saved: true,
-            alternative_text: "",
-            status: ""
+            status: "",
+            type:MessageType.ANSWER
         };
     };
 
@@ -251,7 +235,7 @@ export default function useWebSocketChat(activeChat: Chat) {
         try {
             socketMessagesRef.current = [
                 ...socketMessagesRef.current.map((m) => {
-                    return m.id != messageId ? m : message;
+                    return m.id !== messageId ? m : message;
                 }),
             ];
 
@@ -283,8 +267,46 @@ export default function useWebSocketChat(activeChat: Chat) {
                 case MessageType.END:
                     handleEndMessage(message as EndMessage);
                     break;
+                case MessageType.ERROR:
+                    handleErrorMessage(message as ErrorMessage);
+                    break;
+                case MessageType.UNKNOWN:
+                    handleUnknowMessage(message as UnknowMessage);
+                    break;
             }
         }
+    };
+
+        /**
+     * Handles an answer message by appending it to the appropriate chat message.
+     *
+     * @param {ErrorMessage} message - The ErrorMessage message.
+     */
+        const handleErrorMessage = (message: ErrorMessage) => {
+            const newMessage = createChatMessage(
+                uuidv4(),
+                "assistant",
+                message.getContent().description,
+                message.getType()
+            );
+            addSocketMessage({ ...newMessage });
+            setStatus({ ...status, allowQuestions: true });
+        };
+
+    /**
+     * Handles an answer message by appending it to the appropriate chat message.
+     *
+     * @param {UnknowMessage} message - The Unknown message.
+     */
+    const handleUnknowMessage = (message: UnknowMessage) => {
+        const newMessage = createChatMessage(
+            uuidv4(),
+            "assistant",
+             message.getContent().content,
+             message.getType()
+        );
+        addSocketMessage({ ...newMessage });
+        setStatus({ ...status, allowQuestions: true });
     };
 
     /**
@@ -330,7 +352,8 @@ export default function useWebSocketChat(activeChat: Chat) {
         const newMessage = createChatMessage(
             message.getId(),
             "assistant",
-            existingAnswer ? existingAnswer.text + message.getContent().text : message.getContent().text
+            existingAnswer ? existingAnswer.text + message.getContent().text : message.getContent().text,
+            message.getType()
         );
         addSocketMessage({ ...newMessage });
         setStatus({ ...status, allowQuestions: false });
@@ -342,7 +365,7 @@ export default function useWebSocketChat(activeChat: Chat) {
      * @param {QuestionMessage} message - The question message.
      */
     const handleQuestion = (message: QuestionMessage) => {
-        const question = createChatMessage(message.getId(), "user", message.getContent().question);
+        const question = createChatMessage(message.getId(), "user", message.getContent().question, message.getType());
         addSocketMessage({ ...question });
     };
 
@@ -354,7 +377,7 @@ export default function useWebSocketChat(activeChat: Chat) {
      * @param {string} text - The message text.
      * @returns {ChatMessage} The constructed message.
      */
-    const createChatMessage = (id: UUID, role: "assistant" | "user", text: string): ChatMessage => {
+    const createChatMessage = (id: UUID, role: "assistant" | "user" , text: string, type:MessageType): ChatMessage => {
         return {
             chat_id: chat!.id,
             id: id,
@@ -367,7 +390,8 @@ export default function useWebSocketChat(activeChat: Chat) {
             userName: role === "user" ? "Tú" : "Asistent",
             rateable: false,
             alternative_text: "",
-            status: ""
+            status: "",
+            type:type
         };
     };
 
@@ -377,7 +401,7 @@ export default function useWebSocketChat(activeChat: Chat) {
      * @returns {WebSocket} The connected WebSocket instance.
      */
     const connectToWebsocket = (): WebSocket => {
-        const ws = new WebSocket("ws://localhost:8015?authorization=" + token + "&chatId=" + chat?.id);
+        const ws = new WebSocket(WS_HOST+"?authorization=" + token + "&chatId=" + chat?.id);
 
         ws.onopen = () => {
             setConnectionState(CONNECTION_STATE.CONNECTED);

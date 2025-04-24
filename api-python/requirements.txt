@@ -1,0 +1,9 @@
+fastapi==0.115.8
+fastapi-cli==0.0.7
+nest-asyncio==1.6.0
+pydantic==2.5.2
+pydantic_core==2.14.5
+typing_extensions==4.12.2
+uvicorn==0.34.0
+python-dotenv==1.0.1
+PyJWT==2.10.1

@@ -4,11 +4,9 @@
   "main": "server.js",
   "scripts": {
     "tsc": "npx tsc",
-    "start": "nodemon server.js &  nodemon --ext ts --exec ts-node src/webserver.ts 8015 &",
-    "start2": "pkill -f node & pkill -f nodemon & kill -9 $(lsof -ti :3003) & kill -9 $(lsof -ti :8010) & node server.js & ts-node src/webserver.ts 8010 &",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "websocket": "node websocket.js 8005 & node websocket2.js 9005 &",
-    "remotews": "nodemon --ext ts --exec ts-node src/remotewebserver.ts 9015"
+    "start": "nodemon server.js",
+    "start2": "pkill -f node & pkill -f nodemon & kill -9 $(lsof -ti :3003) & kill -9 $(lsof -ti :8010) & node server.js & ts-node src/webserversocket.ts 8010 &",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",

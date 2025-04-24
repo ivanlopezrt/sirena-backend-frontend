@@ -132,6 +132,13 @@ li.autocomplete-ul__li {
     width: 70vw;
 }
 
+.system-message {
+    background: #f3f3f3;
+    border-radius: 8px;
+    border: solid 1px #ffffff;
+    text-align: center;
+}
+
 /* Contenedor de la animación */
 .loader {
     background: linear-gradient(90deg, #f0f0f0 25%, #c7c7c7 50%, #f0f0f0 75%);

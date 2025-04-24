@@ -1,4 +1,3 @@
-import { JwtPayload } from "jsonwebtoken";
 import AuthUser from "../AuthUser";
 
 export default interface TokenValidatorInterface{

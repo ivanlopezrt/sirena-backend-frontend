@@ -8,6 +8,8 @@ import Loading from "../UI/Loading";
 import { CONNECTION_STATE } from "../../hooks/useWebSocketChat";
 import { stat } from "fs";
 import ChatAssistantStatus from "./ChatAssistantStatus";
+import { MessageType } from "../../models/messages/MessageType";
+import ChatMessageFactory from "./ChatMessageFactory";
 
 export interface ChatProps {
     model: Chat;
@@ -42,7 +44,8 @@ export default function ChatWindow(props: ChatProps) {
                 rateable: false,
                 saved: false,
                 alternative_text: null,
-                status:""
+                status:"",
+                type:MessageType.QUESTION
             });
         }
     };
@@ -64,10 +67,7 @@ export default function ChatWindow(props: ChatProps) {
                     <div className="scroll-y me-n5 pe-5 h-lg-auto">
                         {isClient &&
                             messages.map((message) => (
-                                <ChatMessage
-                                    key={message.id}
-                                    message={message}
-                                />
+                                <ChatMessageFactory message={message} />
                             ))}
                     </div>
                 </div>

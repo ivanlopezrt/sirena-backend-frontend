@@ -1,3 +1,4 @@
+import { MessageType } from "./messages/MessageType";
 import { FeedbackRating } from "./shared/FeedbackRating";
 
 /**
@@ -27,7 +28,7 @@ export default interface ChatMessage {
     /**
      * Rol del usuario que envió el mensaje, que puede ser "assistant" o "user".
      */
-    role: "assistant" | "user";
+    role: "assistant" | "user" | "system";
 
     /**
      * Texto del mensaje enviado.
@@ -63,4 +64,9 @@ export default interface ChatMessage {
      * Status informativo del mensaje
      */
     status:string;
+
+    /**
+     * Tipo del mensaje
+     */
+    type:MessageType
 }

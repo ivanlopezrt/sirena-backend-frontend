@@ -7,6 +7,8 @@ import UnknowMessage from "./UnknowMessage";
 import StatusMessage from "./StatusMessage";
 import EndMessage from "./EndMessage";
 import SocketMessageInterface from "./SocketMessageInterface";
+import ErrorMessage from "./ErrorMessage";
+import { ErrorMessageData } from "./ErrorMessageData";
 
 /**
  * Fábrica de mensajes que crea instancias de diferentes tipos de mensajes basados en el tipo recibido.
@@ -31,6 +33,9 @@ export default class MessageFactory {
 
             case MessageType.END:
                     return new EndMessage(message.id);
+
+            case MessageType.ERROR:
+                    return new ErrorMessage(message.content);
             
             default:
                 return new UnknowMessage();

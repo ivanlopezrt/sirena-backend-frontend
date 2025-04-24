@@ -7,6 +7,7 @@ import DiagnosisService from "../services/DiagnosisService";
 import DiagnosticData from "../models/DiagnosticData";
 import toast from "react-hot-toast";
 import useChatsService from "./useChatsService";
+import { MessageType } from "../models/messages/MessageType";
 
 /**
  * Custom hook for managing chat interactions.
@@ -178,7 +179,8 @@ export default function useChat(activeChat: Chat) {
             rateable: false,
             saved: false,
             alternative_text: null,
-             status:""
+             status:"",
+             type:MessageType.ANSWER
         };
     };
 
@@ -199,7 +201,8 @@ export default function useChat(activeChat: Chat) {
             rateable: false,
             saved: true,
             alternative_text: null,
-            status:""
+            status:"",
+            type:MessageType.ERROR
         };
     };
 

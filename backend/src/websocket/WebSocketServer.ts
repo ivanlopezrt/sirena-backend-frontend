@@ -22,8 +22,8 @@ export default class WebSocketServer {
      * @param port - El puerto en el que se ejecutará el servidor WebSocket.
      * @param tokenValidator - Instancia del validador de tokens.
      */
-    constructor(port: number, tokenValidator: TokenValidatorInterface) {
-        this.server = new WebSocket.Server({ port });
+    constructor(tokenValidator: TokenValidatorInterface) {
+        this.server = new WebSocket.Server({ noServer:true });
         this.tokenValidator = tokenValidator;
         this.clients = [];
     }
